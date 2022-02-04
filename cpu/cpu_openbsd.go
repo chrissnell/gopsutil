@@ -11,7 +11,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/shirou/gopsutil/v3/internal/common"
 	"github.com/tklauser/go-sysconf"
@@ -74,15 +73,6 @@ func TimesWithContext(ctx context.Context, percpu bool) ([]TimesStat, error) {
 		ncpu, _ = Counts(true)
 	} else {
 		ncpu = 1
-	}
-
-	smt, err := smt()
-	if err == syscall.EOPNOTSUPP {
-		// if hw.smt is not applicable for this platform (e.g. i386),
-		// pretend it's enabled
-		smt = true
-	} else if err != nil {
-		return nil, err
 	}
 
 	for i := 0; i < ncpu; i++ {
